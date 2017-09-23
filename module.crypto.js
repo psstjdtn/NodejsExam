@@ -12,3 +12,50 @@ var shasum2 = crypto.createHash('sha256');
 shasum2.update('test1234~@##');
 var output2 = shasum2.digest('hex');
 console.log('wrong hash='+output2);
+
+//-----------------------------------
+
+var secret_key = "IAMABOYYOUAREGIRL987654312312312!@#!@#@!$!@#%$";
+var cipher = crypto.createCipher('aes192',secret_key);
+cipher.update(password, 'utf8', 'base64');
+var cipheredOutput = cipher.final('base64');
+
+var decipher = crypto.createDecipher('aes192', secret_key);
+decipher.update(cipheredOutput, 'base64', 'utf8');
+var decpheredOutput = decipher.final('utf8');
+
+console.log('ciphered password='+cipheredOutput);
+console.log('deciphered password='+decpheredOutput)
+
+//-----------------------------------
+
+var fs = require('fs');
+var data ={password:password,output:output,
+		cipheredOutput:cipheredOutput};
+
+fs.writeFile('password.txt', JSON.stringify(data), 
+	'utf8', function(err) {
+		if(err) {
+			console.log(err);
+		} else {
+			console.log('write completed...');
+		}
+	});
+fs.readFile('password.txt', 'utf8', function(err,date) {
+		if(err) {
+			console.log(err);
+		} else {
+			console.log('data='+data);
+		}
+})
+
+
+
+
+
+
+
+
+
+
+
