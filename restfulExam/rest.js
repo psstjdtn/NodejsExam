@@ -9,17 +9,66 @@ var users = [];
 app.get('/user', function(req,res){
 	res.send(JSON.stringify(users));
 });
-app.get('/user:id', function(req,res){
-	res.send(JSON.stringify({}));
+app.get('/user/:id', function(req,res){
+	var select_index = -1;
+	for (var i = 0; i < users.length; i++) {
+		var obj = users[i];
+		if (obj.id == Number(req.params.id)) {
+			select_index = i;
+			break;
+		}
+	}
+	if (select_index == -1) {
+		res.send(JSON.stringify({}));
+	} else {
+		res.send(JSON.stringify(users[select_index]));
+	}
 });
+
 app.post('/user', function(req,res){
-	res.send(JSON.stringify({}));
+	var name = req.body.name;
+	var age = Number(req.body.age);
+	var obj = {id:users.length+1, name:name, age:age};
+	users.push(obj);
+	res.send(JSON.stringify({result:true, 
+		api : 'add user info'}));
 });
-app.pet('/user/:id', function(req,res){
-	res.send(JSON.stringify({}));
+
+app.put('/user/:id', function(req,res){
+var select_index = -1;
+	for (var i = 0; i < users.length; i++) {
+		var obj = users[i];
+		if (obj.id == Number(req.params.id)) {
+			select_index = i;
+			break;
+		}
+	}
+	if (select_index == -1) {
+		res.send(JSON.stringify({result:false}));
+	} else {
+		var name = req.body.name;
+		var age = Number(req.body.age);
+		var obj = {id:Number(req.params.id), name:name, age:age};
+		users[select_index] = obj;
+		res.send(JSON.stringify({result:true}));	
+	}
 });
-app.delete(('/user/:id', function(req,res){
-	res.send(JSON.stringify({}));
+
+app.delete('/user/:id', function(req,res){
+	var select_index = -1;
+	for (var i = 0; i < users.length; i++) {
+		var obj = users[i];
+		if (obj.id == Number(req.params.id)) {
+			select_index = i;
+			break;
+		}
+	}
+	if (select_index == -1) {
+		res.send(JSON.stringify({result:false}));
+	} else {
+		users.splice(select_index, 1)
+		res.send(JSON.stringify({result:true}));
+	}
 });
 
 app.listen(52273, function(){
