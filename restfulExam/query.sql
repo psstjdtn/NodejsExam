@@ -2,11 +2,19 @@ create database restful;
 
 use restful;
 
+
+use restful;
+
+drop table user;
+
 create table user(
-id integer primary key auto_increment,
-name text,
+id integer PRIMARY KEY auto_increment ,
+user_id text,
+password text,
+name text,  
 age integer
 );
+
 
 -- followtruck
 create table users(

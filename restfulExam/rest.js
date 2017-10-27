@@ -164,10 +164,14 @@ app.get('/user/:id',function(req,res){
 			}
 		});
 });
+var crypto = require('crypto');
 app.post('/user',function(req,res){
+	var password = req.body.password;
+	var hash = crypto.createHash('sha256').
+		update(password).digest('base64');
 	connection.query(
-		'insert into user(name,age) values(?,?)',
-		[ req.body.name, req.body.age ], 
+		'insert into user(user_id,password,name,age) values(?,?,?,?)',
+		[ req.body.user_id, hash, req.body.name, req.body.age ], 
 		function(err, result) {
 			if (err) {
 				res.send(JSON.stringify(err));
@@ -176,6 +180,27 @@ app.post('/user',function(req,res){
 			}
 		})
 });
+
+app.post('/user/login',function(req,res){
+	var password = req.body.password;
+	var hash = crypto.createHash('sha256').
+		update(password).digest('base64');
+	connection.query(
+		'select id from user where user_id=? and password=?',
+		[ req.body.user_id, hash ], function(err, results, fields){
+			if (err) {
+					res.send(JSON.stringify(err));
+			} else {
+				if (results.length > 0) { //조건만족 -> 로그인성공
+					res.send(JSON.stringify({result:true}));
+				} else { //조건불만족 -> 로그인 실패
+					res.send(JSON.stringify({result:false}));
+				}
+			}
+		});
+});
+
+
 app.put('/user/:id',function(req,res){
 	connection.query(
 		'update user set name=?,age=? where id=?',
